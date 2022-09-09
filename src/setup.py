@@ -1,5 +1,6 @@
 import sys
-from os.path import abspath
+import os
 
 def setup():
-    sys.path.append(abspath('notes'))
+    dir = os.path.dirname(os.path.realpath(__file__))
+    sys.path.append(os.path.join(dir, 'notes'))

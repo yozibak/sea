@@ -1,5 +1,7 @@
+from interface.prompt import prompt
+from service import unit_of_work
 from adapters import orm
-from notes.service import unit_of_work
+from . import commands
 
 def start():
     orm.start_mappers()
@@ -8,25 +10,21 @@ def start():
     )
 
 
-def handle_actions(
-    uow: unit_of_work.AbstractUnitOfWork
-):
-    with uow:
-        alive = True
-        while alive:
-            print("""
-            What do you want?
-
-            [0]: Exit
-            [1]: Get recent notes
-            [2]: Get random note
-
-            """)
-            action = int(input()) or 0
-            if action == 1:
-                print('get recent notes!')
-            elif action == 2:
-                print('get random')
-            else:
-                alive = False
-
+def handle_actions(uow: unit_of_work.AbstractUnitOfWork):
+    alive = True
+    while alive:
+        print('What do you want?')
+        action = prompt(commands=[
+            "Exit",
+            commands.list_recent.prompt_name,
+            commands.get_random.prompt_name,
+            commands.add_note.prompt_name,
+        ])
+        if action == 1:
+            commands.list_recent(uow)
+        elif action == 2:
+            commands.get_random(uow)
+        elif action == 3:
+            commands.add_note(uow)
+        else:
+            alive = False
