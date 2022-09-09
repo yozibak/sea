@@ -1,7 +1,7 @@
 from setup import setup
 setup()
 
-from notes.interface import cli
+from notes.interface import interface
 
 if __name__ == '__main__':
-    cli.start()
+    interface.start()

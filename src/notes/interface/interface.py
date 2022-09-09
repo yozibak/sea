@@ -5,9 +5,9 @@ from . import commands
 
 def start():
     orm.start_mappers()
-    handle_actions(
-        unit_of_work.SqlAlchemyUnitOfWork()
-    )
+    uow = unit_of_work.SqlAlchemyUnitOfWork()
+    with uow:
+        handle_actions(uow)
 
 
 def handle_actions(uow: unit_of_work.AbstractUnitOfWork):

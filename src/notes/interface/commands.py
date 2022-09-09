@@ -3,7 +3,6 @@ from .editor import editor
 from service import services, unit_of_work
 from domain import model
 
-
 def command(command_name: str):
     def deco(fn):
         @functools.wraps(fn)
@@ -38,8 +37,8 @@ def edit_note():
 
 @command('Add New Note')
 def add_note(uow: unit_of_work.AbstractUnitOfWork):
+    # shouldn't this on service layer? 
     title, content = editor()
-    with uow:
-        note = model.Note(title=title, content=content)
-        uow.notes.add(note)
-        uow.commit()
+    note = model.Note(title=title, content=content)
+    uow.notes.add(note)
+    uow.commit()

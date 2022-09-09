@@ -22,4 +22,4 @@ class Note:
 
 def get_random(notes: List[Note]):
     if len(notes):
-        return notes[randint(0, len(notes))]
+        return notes[randint(0, len(notes)-1)]
