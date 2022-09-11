@@ -12,10 +12,10 @@ def get_random(
 
 def list_recent(
     uow: unit_of_work.AbstractUnitOfWork,
+    pagination: int,
 ):
-    notes = uow.notes.list()
-    for note in notes:
-        print(note)
+    notes = uow.notes.list(pagination=pagination)
+    return notes
 
 
 def edit_note(
@@ -31,7 +31,7 @@ def edit_note(
 
 def add_note(
     title: str, content: str,
-    uow: unit_of_work.AbstractUnitOfWork    
+    uow: unit_of_work.AbstractUnitOfWork
 ):
     note = model.Note(
         title=title, 

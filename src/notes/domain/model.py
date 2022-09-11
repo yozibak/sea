@@ -17,9 +17,13 @@ class Note:
         self.updated = updated
     
     def __str__(self) -> str:
-        return self.title + '\n\n' + self.content
+        return f'{date_format(self.updated)} - {self.title}'
 
 
 def get_random(notes: List[Note]):
     if len(notes):
         return notes[randint(0, len(notes)-1)]
+
+
+def date_format(date: date):
+    return date.strftime("%y/%m/%d")

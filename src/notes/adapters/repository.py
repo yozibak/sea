@@ -18,8 +18,8 @@ class AbstractRepository(abc.ABC):
             self.seen.add(note)
         return note
     
-    def list(self, *args) -> List[model.Note]:
-        return self._list(*args)
+    def list(self, search='', pagination=0) -> List[model.Note]:
+        return self._list(search, pagination)
 
     @abc.abstractmethod
     def _add(self, note: model.Note):
@@ -30,7 +30,7 @@ class AbstractRepository(abc.ABC):
         raise NotImplementedError
     
     @abc.abstractmethod
-    def _list(self, **kwargs) -> List[model.Note]:
+    def _list(self, search: str, pagination: int) -> List[model.Note]:
         raise NotImplementedError
 
 
@@ -45,5 +45,13 @@ class SqlAlchemyRepository(AbstractRepository):
     def _get(self, id):
         return self.session.query(model.Note).filter_by(id=id).first()
     
-    def _list(self, **kwargs):
-        return self.session.query(model.Note).order_by(model.Note.updated).all()
+    def _list(self, search, pagination):
+        query = self.session.query(model.Note).order_by(model.Note.updated)
+
+        if search:
+            query = query # later
+
+        if pagination:
+            query = query.offset(pagination).limit(10)
+        
+        return query.all()

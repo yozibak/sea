@@ -1,7 +1,6 @@
-from interface.prompt import prompt
+from . import commands, prompt
 from service import unit_of_work
 from adapters import orm
-from . import commands
 
 def start():
     orm.start_mappers()
@@ -13,18 +12,14 @@ def start():
 def handle_actions(uow: unit_of_work.AbstractUnitOfWork):
     alive = True
     while alive:
-        print('What do you want?')
-        action = prompt(commands=[
-            "Exit",
-            commands.list_recent.prompt_name,
-            commands.get_random.prompt_name,
-            commands.add_note.prompt_name,
-        ])
-        if action == 1:
-            commands.list_recent(uow)
-        elif action == 2:
-            commands.get_random(uow)
-        elif action == 3:
-            commands.add_note(uow)
+        # prompt.clear()
+        print('Enter command number.')
+
+        cmd_list = ["Exit"] + [c.prompt_name for c in commands.ENTRY_COMMANDS]
+        cmd_num = prompt.print_commands(cmd_list)
+
+        if type(cmd_num) == int and 0 < cmd_num < len(cmd_list):
+            execute_command = commands.ENTRY_COMMANDS[cmd_num-1]
+            execute_command(uow)
         else:
             alive = False
