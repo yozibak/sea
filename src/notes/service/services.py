@@ -3,20 +3,20 @@ from service import unit_of_work
 from datetime import date
 
 
-def get_random(
-    uow: unit_of_work.AbstractUnitOfWork,
-):
-    notes = uow.notes.list()
-    return model.get_random(notes)
-
-
-def list_recent(
+def list_notes(
     uow: unit_of_work.AbstractUnitOfWork,
     pagination: int,
 ):
     notes = uow.notes.list(pagination=pagination)
     return notes
 
+
+def get_note(
+    uow: unit_of_work.AbstractUnitOfWork,
+    note_id: str
+):
+    note = uow.notes.get(note_id)
+    return note
 
 def edit_note(
     id: int, title: str, content: str,

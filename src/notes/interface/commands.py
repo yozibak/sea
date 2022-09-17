@@ -1,9 +1,10 @@
 import functools
+from ..service import control
 from domain.model import Note
-from notes.interface.act import require_act
+from notes.interface.act import list_act, view_act
 from . import prompt
 from .editor import editor
-from service import services, unit_of_work
+from service import services, unit_of_work, control
 from domain import model
 
 def command(command_name: str):
@@ -18,29 +19,51 @@ def command(command_name: str):
 
 
 @command('List Recent Notes')
-def list_recent(uow: unit_of_work.AbstractUnitOfWork, pagination=0):
-    notes = services.list_recent(uow, pagination)
-    prompt.print_notes(notes)
-    res = require_act(notes)
-    if type(res) == Note:
-        pass
-        # prompt.print_content(res)
-    elif res == 'prev':
-        pass
-    elif res == 'next':
-        pass
-    elif res == 'quit':
-        pass
+def list_recent(ctl: control.Controller):
+    ctl.list_latest()
+    browse_list(ctl)
+
+
+def browse_list(ctl: control.Controller):
+    alive = True
+    while alive:
+        prompt.clear()
+        notes = ctl.notes
+        prompt.print_notes(notes)
+        res = list_act(ctl)
+        if res == 'quit':
+            alive = False
+        elif res == 'view':
+            alive = False
+        else:
+            pass # loop with new list
     
+    if ctl.note_idx:
+        view_note(ctl)
+
+
+def view_note(ctl: control.Controller):
+    alive = True
+    while alive:
+        prompt.clear()
+        note = ctl.current_note()
+        prompt.print_content(note)
+        res = view_act(ctl)
+        if res == 'quit':
+            alive == False
+        elif res == 'edit':
+            alive == False
+        elif res == 'delete':
+            alive == False
+        else:
+            pass # loop
+
 
 
 @command('Search For Word')
 def search_word(uow: unit_of_work.AbstractUnitOfWork):
-    notes = services.list_recent(uow)
+    notes = services.list_notes(uow)
     prompt.print_notes(notes)
-
-
-
 
 
 @command('Show Random Note')
@@ -60,9 +83,9 @@ def add_note(uow: unit_of_work.AbstractUnitOfWork):
 
 ENTRY_COMMANDS = [
     list_recent,
-    get_random,
-    search_word,
-    add_note,
+    # get_random,
+    # search_word,
+    # add_note,
 ]
 
 # 
