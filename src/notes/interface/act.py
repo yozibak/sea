@@ -1,42 +1,68 @@
+from .prompt import invalid_input
 from .util import try_parse_int
 from service import control
+from .signal import Signal
+from . import commands
+
+
+def idle_act(ctl: control.Controller) -> Signal:
+    val = input("[e]: exit, [l]: list, [r]: random, [s]: search, [a]: add\n")
+
+    if val == 'e':
+        return Signal.exit
+    elif val == 'l':
+        commands.list_latest(ctl)
+        return Signal.list
+    elif val == 's':
+        commands.list_latest(ctl)
+        return Signal.list
+    elif val == 'r':
+        return Signal.note
+    elif val == 'a':
+        return Signal.note
+    
+    invalid_input()
+
 
 def list_act(ctl: control.Controller):
     val = try_parse_int(
         input("[index]: view note, [Enter]: next, [p]: prev, [q]: quit \n")
     )
 
-    # TODO this seems a little strange to put here. but later. 
-    if type(val) == int and val < len(ctl.notes):
-        ctl.note_idx.set(val)
-
-        return 'view'
+    if type(val) == int:
+        valid = commands.select_note(ctl, val)
+        if valid:
+            return Signal.note
     elif val == '':
-        ctl.next_list()
+        commands.next_list(ctl)
+        return
     elif val == 'p':
-        ctl.prev_list()
+        commands.prev_list(ctl)
+        return
     elif val == 'q':
         return 'quit'
-    else:
-        print('invalid input.')
-        return list_act()
+
+    invalid_input()
 
 
-def view_act(ctl: control.Controller):
+def note_act(ctl: control.Controller):
     val = try_parse_int(
-        input("[e]: edit note, [Enter]: next, [p]: prev, [q]: quit [d]: delete\n")
+        input("[r]: revise, [Enter]: next, [p]: prev, [e]: exit [d]: delete\n")
     )
 
-    if val == 'e':
-        return 'edit'
+    if val == 'r':
+        # TODO
+        return
     elif val == '':
-        ctl.next_note()
+        commands.next_note(ctl)
+        return
     elif val == 'p':
-        ctl.prev_note()
-    elif val == 'q':
-        return 'quit'
+        commands.prev_note(ctl)
+        return
+    elif val == 'e':
+        return Signal.exit
     elif val == 'd':
-        return 'delete'
-    else:
-        print('invalid input.')
-        return view_act()
+        # TODO
+        return Signal.exit
+    
+    invalid_input()

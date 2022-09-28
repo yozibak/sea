@@ -5,17 +5,12 @@ from sqlalchemy.orm.session import Session
 
 
 class AbstractRepository(abc.ABC):
-    def __init__(self):
-        self.seen = set() # type: Set[model.Note]
 
     def add(self, note: model.Note):
         self._add(note)
-        self.seen.add(note)
 
     def get(self, id) -> model.Note:
         note = self._get(id)
-        if note:
-            self.seen.add(note)
         return note
     
     def list(self, search='', pagination=0) -> List[model.Note]:

@@ -6,7 +6,7 @@ from domain import model
 EDITOR = os.environ.get('EDITOR', 'vim')
 
 
-def editor(note: model.Note = None) -> Tuple[str, str]:
+def note_editor(note: model.Note = None) -> Tuple[str, str]:
     ini = ''
     if note:
         ini = note.__str__()

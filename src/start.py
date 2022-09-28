@@ -1,7 +1,7 @@
 from setup import setup
 setup()
 
-from notes.interface import interface
+from notes.interface import process
 
 if __name__ == '__main__':
-    interface.start()
+    process.start()
