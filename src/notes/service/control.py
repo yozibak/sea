@@ -1,95 +1,76 @@
-from select import select
-from . import unit_of_work, services
-from typing import List
 from domain import model
+from . import unit_of_work, services, editor
 
 class Controller:
     def __init__(self, uow: unit_of_work.AbstractUnitOfWork):
         self.uow = uow
-
-        # state? 
-        self.notes = [] # type: List[model.Note]
-        self.pagination = ListCursor()
-        self.note_idx = NoteCursor()
+        self.pagination = 0
+        self.note_idx = 0
         self.selected_note_id = None
-    
-    # note list mgmt
 
-    def fetch_notes_list(self):
-        self.notes = services.list_notes(self.uow, self.pagination.current)
-    
-    def list_latest(self):
-        self.pagination.set(0)
-        self.fetch_notes_list()
-    
-    def next_list(self):
-        self.pagination.next()
-        self.fetch_notes_list()
+    @property
+    def notes(self):
+        return services.list_notes(self.uow, self.pagination)
 
-    def prev_list(self):
-        self.pagination.prev()
-        self.fetch_notes_list()
-    
-    # note select mgmt
-    
-    def adjust_note(self): 
-        note_id = self.notes[self.note_idx.current].id
-        self.set_note(note_id)
-
-    def set_note(self, note_id: str):
-        self.selected_note_id = note_id
-    
-    def next_note(self):
-        self.note_idx.next()
-        self.adjust_note()
-    
-    def prev_note(self):
-        self.note_idx.prev()
-        self.adjust_note()
-    
-    def latest_note(self):
-        self.pagination.set(0)
-        self.fetch_notes_list()
-        self.note_idx.set(0)
-        self.adjust_note()
-    
     @property
     def current_note(self):
         if not self.selected_note_id:
-            self.adjust_note()
+            self._adjust_nid()
         note = services.get_note(self.uow, self.selected_note_id)
         return note
     
-    # mutation
+    def list_latest(self):
+        self.pagination = 0
+    
+    def next_list(self):
+        self.pagination += 1 #
+        if len(self.notes) == 0:
+            self.prev_list()
+        else:
+            self.note_idx = 0
 
-    def add_note(self, title: str, content: str):
+    def prev_list(self):
+        if self.pagination > 1:
+            self.pagination -= 1
+            self.note_idx = len(self.notes) - 1
+
+    def _adjust_nid(self):
+        self.selected_note_id = self.notes[self.note_idx].id
+
+    def select_note(self, idx: int):
+        if -1 < idx < len(self.notes):
+            self.note_idx = idx
+            self._adjust_nid()
+            return True
+    
+    def next_note(self):
+        if self.note_idx < len(self.notes)-1:
+            self.note_idx += 1
+            self._adjust_nid()
+        else:
+            self.next_list()
+    
+    def prev_note(self):
+        if self.note_idx == 0:
+            self.prev_list()
+        else:
+            self.note_idx -= 1
+            self._adjust_nid()
+    
+    def latest_note(self):
+        self.pagination = 0
+        self.note_idx = 0
+        self._adjust_nid()
+
+    def add_note(self):
+        title, content = editor.note_editor()
         services.add_note(title, content, self.uow)
         self.latest_note()
 
-    def edit_note(self, id: str, title: str, content: str):
-        services.edit_note(id, title, content, self.uow)
+    def edit_note(self, note: model.Note):
+        title, content = editor.note_editor(note)
+        services.edit_note(note.id, title, content, self.uow)
         self.latest_note()
 
-
-class Cursor():
-
-    def __init__(self):
-        self.current = 0
-    
-    def set(self, dest: int):
-        self.current = dest
-
-    def next(self):
-        self.current += 1
-    
-    def prev(self):
-        self.current -= 1
-
-
-class ListCursor(Cursor):
-    pass
-
-
-class NoteCursor(Cursor):
-    pass
-
+    def delete_note(self, id: str):
+        pass

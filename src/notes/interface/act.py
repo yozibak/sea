@@ -1,8 +1,7 @@
-from .prompt import invalid_input
+from . import prompt
 from .util import try_parse_int
 from service import control
 from .signal import Signal
-from . import commands
 
 
 def idle_act(ctl: control.Controller) -> Signal:
@@ -11,17 +10,18 @@ def idle_act(ctl: control.Controller) -> Signal:
     if val == 'e':
         return Signal.exit
     elif val == 'l':
-        commands.list_latest(ctl)
+        ctl.list_latest()
         return Signal.list
     elif val == 's':
-        commands.list_latest(ctl)
+        ctl.list_latest() # TODO
         return Signal.list
     elif val == 'r':
         return Signal.note
     elif val == 'a':
+        ctl.add_note()
         return Signal.note
     
-    invalid_input()
+    prompt.invalid_input()
 
 
 def list_act(ctl: control.Controller):
@@ -30,19 +30,19 @@ def list_act(ctl: control.Controller):
     )
 
     if type(val) == int:
-        valid = commands.select_note(ctl, val)
+        valid = ctl.select_note(val)
         if valid:
             return Signal.note
     elif val == '':
-        commands.next_list(ctl)
+        ctl.next_list()
         return
     elif val == 'p':
-        commands.prev_list(ctl)
+        ctl.prev_list()
         return
     elif val == 'q':
         return 'quit'
 
-    invalid_input()
+    prompt.invalid_input()
 
 
 def note_act(ctl: control.Controller):
@@ -51,18 +51,18 @@ def note_act(ctl: control.Controller):
     )
 
     if val == 'r':
-        # TODO
+        ctl.edit_note(ctl.current_note)
         return
     elif val == '':
-        commands.next_note(ctl)
+        ctl.next_note()
         return
     elif val == 'p':
-        commands.prev_note(ctl)
+        ctl.prev_note()
         return
     elif val == 'e':
         return Signal.exit
     elif val == 'd':
-        # TODO
+        ctl.delete_note(ctl.current_note.id)
         return Signal.exit
     
-    invalid_input()
+    prompt.invalid_input()

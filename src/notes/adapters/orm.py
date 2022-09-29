@@ -2,8 +2,8 @@ from sqlalchemy import (
     Date, Column, Integer, String, Table, MetaData, Text, create_engine,
 )
 from sqlalchemy.orm import mapper, declarative_base, sessionmaker
-from domain import model
-from notes.config import get_sqlite_path
+from notes.domain import model
+from config import get_sqlite_path
 
 
 # mappings

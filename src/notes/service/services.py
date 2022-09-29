@@ -7,7 +7,7 @@ def list_notes(
     uow: unit_of_work.AbstractUnitOfWork,
     pagination: int,
 ):
-    notes = uow.notes.list(pagination=pagination)
+    notes = uow.notes.list(pagination=pagination*10)
     return notes
 
 
