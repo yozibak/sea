@@ -1,7 +1,7 @@
 import tempfile, os
 from subprocess import call
 from typing import Tuple
-from domain import model
+from notes.domain import model
 
 EDITOR = os.environ.get('EDITOR', 'vim')
 
@@ -9,7 +9,10 @@ EDITOR = os.environ.get('EDITOR', 'vim')
 def note_editor(note: model.Note = None) -> Tuple[str, str]:
     ini = ''
     if note:
-        ini = note.__str__()
+        ini += note.title
+        ini += '\n\n'
+        ini += note.content
+        ini += '\n'
     with tempfile.NamedTemporaryFile(suffix=".tmp", mode='r+') as tf:
         tf.write(ini)
         tf.flush()
@@ -34,5 +37,5 @@ def validate(plain_txt: str) -> bool:
 def retrieve(plain_txt: str) -> Tuple[str,str]:
     splitted = plain_txt.split('\n\n')
     title = splitted[0]
-    content = ''.join(splitted[1:])
+    content = '\n\n'.join(splitted[1:])
     return title, content

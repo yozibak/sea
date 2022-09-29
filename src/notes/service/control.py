@@ -1,79 +1,73 @@
-from domain import model
+from notes.domain import model
 from . import unit_of_work, services, editor
+from random import randint
 
 class Controller:
     def __init__(self, uow: unit_of_work.AbstractUnitOfWork):
         self.uow = uow
-        self.pagination = 0
-        self.note_idx = 0
-        self.selected_note_id = None
+        self.cursor = 0 # 0 ~ last of query result
+        self.query = ''
+    
+    def reset(self):
+        self.cursor = 0
+        self.query = ''
     
     @property
-    def notes_count(self):
-        return services.count_notes(self.uow)
+    def pagination(self):
+        return self.cursor // 10
+    
+    @property
+    def notes_count(self): # TODO maybe better call on demand. 
+        return services.count_notes(self.uow, search=self.query)
 
     @property
     def notes(self):
-        return services.list_notes(self.uow, self.pagination)
+        return services.list_notes(self.uow, self.pagination, self.query)
 
     @property
     def current_note(self):
-        if not self.selected_note_id:
-            self._adjust_nid()
-        return services.get_note(self.uow, self.selected_note_id)
+        return services.get_note(self.uow, self.cursor, self.query)
     
     def list_latest(self):
-        self.pagination = 0
+        self.cursor = 0
     
     def next_list(self):
-        self.pagination += 1 #
-        if len(self.notes) == 0:
-            self.prev_list()
-        else:
-            self.note_idx = 0
+        if self.pagination < self.notes_count // 10:
+            self.cursor = (self.pagination + 1) * 10
 
     def prev_list(self):
         if self.pagination > 1:
-            self.pagination -= 1
-            self.note_idx = len(self.notes) - 1
-
-    def _adjust_nid(self):
-        self.selected_note_id = self.notes[self.note_idx].id
+            self.cursor = (self.pagination - 1) * 10
 
     def select_note(self, idx: int):
         if -1 < idx < len(self.notes):
-            self.note_idx = idx
-            self._adjust_nid()
+            self.cursor = self.pagination * 10 + idx
             return True
     
     def next_note(self):
-        if self.note_idx < len(self.notes)-1:
-            self.note_idx += 1
-            self._adjust_nid()
-        else:
-            self.next_list()
+        if self.cursor < self.notes_count-1:
+            self.cursor += 1
     
     def prev_note(self):
-        if self.note_idx == 0:
-            self.prev_list()
-        else:
-            self.note_idx -= 1
-            self._adjust_nid()
+        if self.cursor != 0:
+            self.cursor -= 1
+
+    def get_random_note(self):
+        self.cursor = randint(0, self.notes_count-1)
     
-    def latest_note(self):
-        self.pagination = 0
-        self.note_idx = 0
-        self._adjust_nid()
+    def search_word(self):
+        self.query = input('Enter search query')
 
     def add_note(self):
         title, content = editor.note_editor()
         services.add_note(title, content, self.uow)
-        self.latest_note()
+        self.list_latest()
 
     def edit_note(self, note: model.Note):
         title, content = editor.note_editor(note)
-        services.edit_note(note.id, title, content, self.uow)
-        self.latest_note()
+        services.edit_note(self.cursor, title, content, self.uow)
 
-    def delete_note(self, id: str):
-        pass
+    def delete_note(self, note: model.Note):
+        if input('Are you sure? [y/n]: ') == 'y':
+            services.delete_note(note, self.uow)
+

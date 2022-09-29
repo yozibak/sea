@@ -1,5 +1,5 @@
 from typing import List
-from domain.model import Note
+from notes.domain import model
 import subprocess
 
 
@@ -8,12 +8,12 @@ def print_commands(commands: List[str]):
         print(f"[{n}]: {cmd}")
 
 
-def print_notes(notes: List[Note]):
+def print_notes(notes: List[model.Note]):
     for idx, note in enumerate(notes):
         print(f'[{idx}]: ', note)
 
 
-def print_content(note: Note):
+def print_content(note: model.Note):
     print(note.title)
     print('\n')
     print(note.content)

@@ -13,9 +13,10 @@ def idle_act(ctl: control.Controller) -> Signal:
         ctl.list_latest()
         return Signal.list
     elif val == 's':
-        ctl.list_latest() # TODO
+        ctl.search_word()
         return Signal.list
     elif val == 'r':
+        ctl.get_random_note()
         return Signal.note
     elif val == 'a':
         ctl.add_note()
@@ -26,7 +27,7 @@ def idle_act(ctl: control.Controller) -> Signal:
 
 def list_act(ctl: control.Controller):
     val = try_parse_int(
-        input("[index]: view note, [Enter]: next, [p]: prev, [q]: quit \n")
+        input("[index]: view note, [Enter]: next, [p]: prev, [e]: exit \n")
     )
 
     if type(val) == int:
@@ -39,8 +40,9 @@ def list_act(ctl: control.Controller):
     elif val == 'p':
         ctl.prev_list()
         return
-    elif val == 'q':
-        return 'quit'
+    elif val == 'e':
+        ctl.reset()
+        return Signal.exit
 
     prompt.invalid_input()
 
@@ -62,7 +64,7 @@ def note_act(ctl: control.Controller):
     elif val == 'e':
         return Signal.exit
     elif val == 'd':
-        ctl.delete_note(ctl.current_note.id)
+        ctl.delete_note(ctl.current_note)
         return Signal.exit
     
     prompt.invalid_input()

@@ -1,6 +1,4 @@
 from datetime import date
-from random import randint
-from typing import List
 
 
 class Note:
@@ -18,11 +16,6 @@ class Note:
     
     def __str__(self) -> str:
         return f'{date_format(self.updated)} - {self.title}'
-
-
-def get_random(notes: List[Note]):
-    if len(notes):
-        return notes[randint(0, len(notes)-1)]
 
 
 def date_format(date: date):

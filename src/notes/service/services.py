@@ -1,10 +1,10 @@
-from domain import model
+from notes.domain import model
 from service import unit_of_work
 from datetime import date
 
 def count_notes(
     uow: unit_of_work.AbstractUnitOfWork,
-    search: str
+    search = ''
 ):
     return uow.notes.count(search)
 
@@ -12,24 +12,26 @@ def count_notes(
 def list_notes(
     uow: unit_of_work.AbstractUnitOfWork,
     pagination: int,
+    query: str
 ):
-    notes = uow.notes.list(pagination=pagination*10)
+    notes = uow.notes.list(pagination=pagination*10, search=query)
     return notes
 
 
 def get_note(
     uow: unit_of_work.AbstractUnitOfWork,
-    note_id: str
+    note_idx: int,
+    query = ''
 ):
-    note = uow.notes.get(note_id)
+    note = uow.notes.get(note_idx, search=query)
     return note
 
 
 def edit_note(
-    id: int, title: str, content: str,
+    idx: int, title: str, content: str,
     uow: unit_of_work.AbstractUnitOfWork
 ):
-    note = uow.notes.get(id)
+    note = uow.notes.get(idx)
     note.title = title
     note.content = content
     note.updated = date.today()
@@ -48,3 +50,12 @@ def add_note(
     )
     uow.notes.add(note)
     uow.commit()
+
+
+def delete_note(
+    note: model.Note,
+    uow: unit_of_work.AbstractUnitOfWork
+):
+    uow.notes.delete(note)
+    uow.commit()
+
