@@ -60,8 +60,7 @@ class SqlAlchemyRepository(AbstractRepository):
                 )
             )
 
-        if pagination:
-            query = query.offset(pagination).limit(10)
+        query = query.offset(pagination).limit(10)
         
         return query.all()
     

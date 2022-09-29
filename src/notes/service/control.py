@@ -7,6 +7,10 @@ class Controller:
         self.pagination = 0
         self.note_idx = 0
         self.selected_note_id = None
+    
+    @property
+    def notes_count(self):
+        return services.count_notes(self.uow)
 
     @property
     def notes(self):
@@ -16,8 +20,7 @@ class Controller:
     def current_note(self):
         if not self.selected_note_id:
             self._adjust_nid()
-        note = services.get_note(self.uow, self.selected_note_id)
-        return note
+        return services.get_note(self.uow, self.selected_note_id)
     
     def list_latest(self):
         self.pagination = 0

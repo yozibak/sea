@@ -2,6 +2,12 @@ from domain import model
 from service import unit_of_work
 from datetime import date
 
+def count_notes(
+    uow: unit_of_work.AbstractUnitOfWork,
+    search: str
+):
+    return uow.notes.count(search)
+
 
 def list_notes(
     uow: unit_of_work.AbstractUnitOfWork,
@@ -17,6 +23,7 @@ def get_note(
 ):
     note = uow.notes.get(note_id)
     return note
+
 
 def edit_note(
     id: int, title: str, content: str,
