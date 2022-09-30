@@ -20,7 +20,7 @@ def idle_act(ctl: control.Controller) -> Signal:
         return Signal.note
     elif val == 'a':
         ctl.add_note()
-        return Signal.note
+        return Signal.list
     
     prompt.invalid_input()
 
@@ -48,9 +48,7 @@ def list_act(ctl: control.Controller):
 
 
 def note_act(ctl: control.Controller):
-    val = try_parse_int(
-        input("[r]: revise, [Enter]: next, [p]: prev, [e]: exit [d]: delete\n")
-    )
+    val = input("[r]: revise, [Enter]: next, [p]: prev, [e]: exit [d]: delete\n")
 
     if val == 'r':
         ctl.edit_note(ctl.current_note)

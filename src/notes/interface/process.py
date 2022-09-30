@@ -25,10 +25,6 @@ def process_idle(controller: control.Controller):
 
 
 def process_list(ctl: control.Controller):
-    '''
-    Process to handle commands on notes list. 
-    It assumes that notes list are updated prior to enter each process.
-    '''
     alive = True
     while alive:
         prompt.clear()
@@ -42,10 +38,6 @@ def process_list(ctl: control.Controller):
 
 
 def process_note(ctl: control.Controller):
-    '''
-    Process to handle commands on individual note
-    It assumes that selected note id is present on control state
-    '''
     alive = True
     while alive:
         prompt.clear()

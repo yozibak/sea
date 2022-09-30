@@ -22,7 +22,7 @@ def note_editor(note: model.Note = None) -> Tuple[str, str]:
             tf.seek(0)
             edited = tf.read()
             if not validate(edited):
-                print("You must set title & content")
+                print("You must set title & content (insert 2 line break after 1st line=title. )")
                 input("press key to edit again")
                 return edit()
             return edited

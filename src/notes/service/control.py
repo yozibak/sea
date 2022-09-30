@@ -57,12 +57,11 @@ class Controller:
         self.cursor = randint(0, self.notes_count-1)
     
     def search_word(self):
-        self.query = input('Enter search query')
+        self.query = input('Enter search query: ')
 
     def add_note(self):
         title, content = editor.note_editor()
         services.add_note(title, content, self.uow)
-        self.list_latest()
 
     def edit_note(self, note: model.Note):
         title, content = editor.note_editor(note)

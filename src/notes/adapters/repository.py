@@ -55,13 +55,13 @@ class SqlAlchemyRepository(AbstractRepository):
         self.session.add(note)
 
     def _get(self, search, idx):
-        query = self.session.query(model.Note)
+        query = self.session.query(model.Note).order_by(model.Note.updated.desc())
         if search:
             query = search_query(query, search)
         return query.offset(idx).limit(1).first()
     
     def _list(self, search, pagination):
-        query = self.session.query(model.Note).order_by(model.Note.updated)
+        query = self.session.query(model.Note).order_by(model.Note.updated.desc())
         if search:
             query = search_query(query, search)
         return query.offset(pagination).limit(10).all()
