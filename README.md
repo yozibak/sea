@@ -6,6 +6,8 @@ https://user-images.githubusercontent.com/58211188/193212807-4748d967-5a61-4133-
 ## Installation
 
 ```sh
+cd your_utils_dir
+git clone git@github.com:yozibak/sea.git
 zsh setup.zsh
 ```
 
