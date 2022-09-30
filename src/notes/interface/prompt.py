@@ -1,6 +1,6 @@
 from typing import List
-from notes.domain import model
 import subprocess
+from notes.domain import model
 
 
 def print_commands(commands: List[str]):

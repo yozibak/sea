@@ -3,10 +3,7 @@ from sqlalchemy import (
 )
 from sqlalchemy.orm import mapper, declarative_base, sessionmaker
 from notes.domain import model
-from config import get_sqlite_path
-
-
-# mappings
+from config import sqlite_loc
 
 metadata = MetaData()
 
@@ -27,11 +24,9 @@ meta_infos = Table(
 )
 
 
-# now make it real...
-
 Base = declarative_base()
 
-engine = create_engine(get_sqlite_path(), encoding='utf8', echo=False)
+engine = create_engine(sqlite_loc(), encoding='utf8', echo=False)
 
 metadata.create_all(engine)
 
@@ -42,7 +37,6 @@ def start_mappers():
     )
 
 
-# use session from this 
 DEFAULT_SESSION_FACTORY = sessionmaker(
     bind=engine
 )

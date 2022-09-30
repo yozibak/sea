@@ -1,7 +1,7 @@
 from .signal import Signal
 from . import prompt, act
-from service import unit_of_work, control
-from adapters import orm
+from notes.service import unit_of_work, control
+from notes.adapters import orm
 
 def start():
     orm.start_mappers()

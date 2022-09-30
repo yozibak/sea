@@ -17,7 +17,8 @@ class Controller:
         return self.cursor // 10
     
     @property
-    def notes_count(self): # TODO maybe better call on demand. 
+    def notes_count(self): 
+        # maybe better call on demand, if it's gonna unbearably slow
         return services.count_notes(self.uow, search=self.query)
 
     @property

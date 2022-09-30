@@ -1,7 +1,7 @@
 from . import prompt
 from .util import try_parse_int
-from service import control
-from .signal import Signal
+from notes.service import control
+from notes.interface.signal import Signal
 
 
 def idle_act(ctl: control.Controller) -> Signal:
