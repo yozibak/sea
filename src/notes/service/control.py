@@ -37,7 +37,7 @@ class Controller:
             self.cursor = (self.pagination + 1) * 10
 
     def prev_list(self):
-        if self.pagination > 1:
+        if self.pagination > 0:
             self.cursor = (self.pagination - 1) * 10
 
     def select_note(self, idx: int):
